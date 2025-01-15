@@ -1,0 +1,116 @@
+*{
+    user-select: none;
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body{
+    margin: 0;
+    display: flex;
+    justify-content: center; 
+    align-items: center;    
+    height: 100vh;
+    font-family: "Helvetica Neue", sans-serif;     
+}
+
+.container{
+    background-color: black;
+    width: 300px;
+    height: 600px;
+    padding: 10px;
+    color: white;
+    box-shadow: 0 0 20px 10px gray;
+    border-radius: 50px;
+    border-style: solid;
+    border-color: rgb(116, 116, 116);   
+    border-width: 4px 4px;
+    position: relative;
+}
+
+.top-container{
+    justify-content: space-between;
+    padding: 5px 30px;
+    display: flex;
+    font-size: 10px;
+    height: 120px;
+}
+
+.status img{
+    height: 10px;
+}
+
+.camera img{
+    height: 25px;
+    width: 30px;
+    margin-left: 70px;
+    margin-top: -5px;
+}
+
+.display{
+    font-size: 60px;
+    font-weight: 100;
+    font-stretch: condensed;
+    text-align: right;
+    margin-right: 20px;
+}
+
+.keys{
+    display: grid;
+    grid-gap: 10px;
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: repeat(5, 1fr);
+    padding: 15px;
+}
+
+.keys button{
+    display: flex;
+    background: #333;
+    color: white;
+    height: 55px;
+    width: 55px;
+    cursor: pointer;
+    border-radius: 50%;
+    font-weight: bold;
+    font-size: large;
+    border: none;   
+    align-items: center;
+    justify-content: center;
+}
+
+.keys button.operators {
+    background: #f1a33c;
+}
+
+.keys button.function{
+    background: #a5a5a5;
+    color: black;
+}
+
+.keys button.equal{
+    background: #a5a5a5;
+    color: black;
+}
+
+.keys button.zero{
+    width: 120px;
+    border-radius: 55px;
+    justify-content: flex-start;
+    padding-left: 30px;
+    grid-column: 1 / span 2;
+}
+
+.bottom{
+    width: 140px;
+    height: 5px;
+    background: white;
+    border-radius: 4px;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    bottom: 10px;
+}
+
+.grid-items:hover{
+    opacity: 0.7;
+}
