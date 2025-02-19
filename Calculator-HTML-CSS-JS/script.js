@@ -1,144 +1,139 @@
 // Variables
-const display = document.querySelector('.display span');
-const numbers = document.querySelectorAll('.numbers');
-const operators = document.querySelectorAll('.operators')
-const equal = document.querySelector('.equal')
-const setPositiveNegative = document.querySelector('.positive-negative')   
-const percent = document.querySelector('.percent')
-const acButton = document.getElementById('AC');
-const decimal = document.querySelector('.decimal')
+const display = document.querySelector(".display span");
+const numbers = document.querySelectorAll(".numbers");
+const operators = document.querySelectorAll(".operators");
+const equal = document.querySelector(".equal");
+const setPositiveNegative = document.querySelector(".positive-negative");
+const percent = document.querySelector(".percent");
+const acButton = document.getElementById("AC");
+const decimal = document.querySelector(".decimal");
 
-let firstValue = "";
-let operator = "";
-let secondValue = "";
-let result = 0;
-let isFirstValue = false;
-let isSecondValue = false;
+let valueInMemory = null;
+let operatorInMemory = null;
 
-// forEach for take the numbers button and encapsulate it in a array
-numbers.forEach(numbers => {
-    numbers.addEventListener("click", (e) => {
-        const buttonHandle = e.target.textContent;
-        if (!isFirstValue) {
-            getFirstValue(buttonHandle);
-        }else if (operator != "" && !isSecondValue) {
-            getSecondValue(buttonHandle);
-        }
-    });
-});
+const getResultOfOperation = () => {
+  const currentValueNum = getValueAsNum();
+  const currentValueInMemory = parseFloat(valueInMemory);
+  switch (operatorInMemory) {
+    case "+":
+      return currentValueInMemory + currentValueNum;
+    case "-":
+      return currentValueInMemory - currentValueNum;
+    case "x":
+      return currentValueInMemory * currentValueNum;
+    case "÷":
+      return currentValueNum !== 0 ? currentValueInMemory / currentValueNum : "Error"; 
+    default:
+      return currentValueNum;
+  }
+};
 
-decimal.addEventListener("click", (e) => {
-    if (!isFirstValue) {
-        if (!firstValue.toString().includes(',')) {
-            firstValue = firstValue === "" ? "0." : firstValue + ".";
-            display.innerHTML = firstValue;
-        }
-    } else if (operator !== "" && !isSecondValue) {
-        if (!secondValue.toString().includes(',')) {
-            secondValue = secondValue === "" ? "0." : secondValue + ".";
-            display.innerHTML = secondValue;
-        }
-    }
-});
-
-acButton.addEventListener("click", (e) => {
-    if (e.target.id === "AC"){
-        display.textContent = 0;
-        firstValue = "";
-        operator = "";
-        secondValue = "";
-        result = 0;
-        isFirstValue = false;
-        isSecondValue = false;
+const handleOperatorClick = (operator) => {
+    const currentValueStr = getValueAsStr();
+    if (!valueInMemory){
+        valueInMemory = currentValueStr;
+        operatorInMemory = operator;
+        setStrAsValue("0");
         return;
     }
-});
+    valueInMemory = getResultOfOperation();
+    operatorInMemory = operator;
+    setStrAsValue("0");
+};
 
-function getFirstValue(element){
-    if (firstValue.toString().length < 10){
-        display.innerHTML = "";
-        firstValue += element;
-        display.innerHTML = firstValue;
-        firstValue = +firstValue; 
-    }
-}
-
-function getSecondValue(element){
-    if (firstValue != "" && operator != ""){
-        if (secondValue.toString().length < 10){
-            secondValue += element;
-            display.innerHTML = secondValue;
-            secondValue = +secondValue;
-        }
-    }
-}
-
-operators.forEach(getOperators => {
-    getOperators.addEventListener("click", (e) => {
-        operator = e.target.textContent;
-        isFirstValue = true;
+operators.forEach((operator) => {
+    operator.addEventListener("click", () => {
+      handleOperatorClick(operator.textContent);
     });
 });
 
-equal.addEventListener('click', () => {
-    switch (operator){
-        case "+":
-            result = firstValue + secondValue;
-            break;
-        case "-":
-            result = firstValue - secondValue;
-            break;
-        case "x":
-            result = firstValue * secondValue;
-            break;
-        case "÷":
-            result = secondValue !== 0 ? firstValue / secondValue : "Error";
-            break;
-        default:
-            result = "Enter value";
-    }
-    display.innerHTML = result;
-    firstValue = result;
-    secondValue = "";
-})
+equal.addEventListener('click',() => {
+  if(valueInMemory){
+    setStrAsValue(getResultOfOperation().toString());
+    valueInMemory = null;
+    operatorInMemory = null;
+  }
+});
 
-setPositiveNegative.addEventListener("click", ()=>{
-    result.textContent = "";
-    if(firstValue != ""){
-        result = -firstValue;
-        firstValue = result;
-    }
-    if(firstValue != "" && secondValue != "" && operator != ""){
-     result = -result; 
-    }
-    display.textContent = result;
-})
+const getValueAsStr = () => display.textContent.split(",").join("");
+
+const getValueAsNum = () => {
+  return parseFloat(getValueAsStr());
+};
+
+const setStrAsValue = (value) => {
+  if (value[value.length - 1] === ".") {
+    display.textContent += ".";
+    return;
+  }
+
+  const [wholeStr, decimalStr] = value.split(".");
+  if (decimalStr) {
+    display.textContent =
+      parseFloat(wholeStr).toLocaleString() + "." + decimalStr;
+  } else {
+    display.textContent = parseFloat(wholeStr).toLocaleString();
+  }
+};
+
+const handleNumberClick = (number) => {
+  const currentValueStr = getValueAsStr();
+  if (currentValueStr === "0") {
+    setStrAsValue(number);
+  } else {
+    setStrAsValue(currentValueStr + number);
+  }
+};
+
+acButton.addEventListener("click", () => {
+  setStrAsValue("0");
+  let valueInMemory = null;
+  let operatorInMemory = null;
+});
+
+setPositiveNegative.addEventListener("click", () => {
+  const currentValueNum = getValueAsNum();
+  const currentValueStr = getValueAsStr();
+  if (currentValueNum > 0) {
+    setStrAsValue("-" + currentValueNum);
+  } else {
+    setStrAsValue(currentValueStr.substring(1));
+  }
+});
 
 percent.addEventListener("click", () => {
-    result.textContent = "";
-    if(firstValue != ""){
-        result = firstValue / 100;
-        firstValue = result;
-    }
-    if(firstValue != "" && secondValue != "" && operator != ""){
-        result = result / 100;
-    }
-    display.textContent = result;
-})
+  const currentValueNum = getValueAsNum();
+  const newValue = currentValueNum / 100;
+  setStrAsValue(newValue.toString());
+});
+
+numbers.forEach((number) => {
+  number.addEventListener("click", () => {
+    handleNumberClick(number.textContent);
+  });
+});
+
+decimal.addEventListener("click", () => {
+  const currentValueStr = getValueAsStr();
+  if (!display.textContent.includes(".")) {
+    setStrAsValue(currentValueStr + ".");
+  }
+});
 
 // Set up the time
-const hour = document.querySelector('#hour');
-const minute = document.querySelector('#minute');
+const hour = document.querySelector("#hour");
+const minute = document.querySelector("#minute");
 
 const time = () => {
-    const currentTime = new Date();
+  const currentTime = new Date();
 
-    let currentHour = currentTime.getHours();
-    let currentMinute = currentTime.getMinutes();
+  let currentHour = currentTime.getHours();
+  let currentMinute = currentTime.getMinutes();
 
-    hour.textContent = currentHour.toString();
-    minute.textContent = currentMinute.toString().padStart(2,'0'); 
-    // I use padStart to avoid only 1 character and force to show 2 adding a 0 in the left
-}
+  hour.textContent = currentHour.toString();
+  minute.textContent = currentMinute.toString().padStart(2, "0");
+  // I use padStart to avoid only 1 character and force to show 2 adding a 0 in the left
+};
 setInterval(time, 1000);
 time();
+
