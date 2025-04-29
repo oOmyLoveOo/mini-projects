@@ -1,0 +1,21 @@
+body{
+    overflow: hidden;
+}
+
+.heart{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    font-size: 20vw;
+    animation: heartBeat .5s infinite alternate;
+}
+
+@keyframes heartBeat{
+    from {
+        transform: scale(.7);
+    }
+    to{
+        transform: scale(1);
+    }
+}
